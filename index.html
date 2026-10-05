@@ -1,236 +1,531 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ms">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#eaf8ff" />
-<title>PYPY — Smart Grid Cybersecurity System</title>
-<style>
-:root{
-  --navy:#0b3b78; --blue:#0e8fe8; --cyan:#28c7f2; --sky:#eaf8ff;
-  --red:#ff3a4f; --orange:#ff9f35; --green:#26c86d; --ink:#10335f;
-  --muted:#64809f; --line:rgba(20,110,185,.14); --white:#fff;
-  --shadow:0 18px 48px rgba(26,104,165,.14);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;background:#dff4ff}
-body{margin:0;font-family:Inter,ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,-apple-system,sans-serif;background:#dff4ff;color:var(--ink);overflow-x:hidden}
-a{text-decoration:none;color:inherit}
-button{font:inherit}
-.app{width:min(100%,470px);margin:auto;background:linear-gradient(#fbfeff,#effaff 46%,#fff);min-height:100svh;overflow:hidden;position:relative;box-shadow:0 0 80px rgba(19,98,155,.14)}
-@media(min-width:760px){body{background:radial-gradient(circle at 20% 20%,#eefaff 0 18%,transparent 36%),radial-gradient(circle at 80% 78%,#e2f6ff 0 18%,transparent 36%),#d9f1fd;background-attachment:fixed}.app{border-left:1px solid rgba(255,255,255,.9);border-right:1px solid rgba(255,255,255,.9)}}
-
-/* topbar */
-.topbar{position:fixed;z-index:100;top:calc(env(safe-area-inset-top) + 10px);left:50%;transform:translateX(-50%);width:min(calc(100% - 22px),448px);height:58px;padding:7px 10px;display:flex;align-items:center;justify-content:space-between;border-radius:22px;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 26px rgba(24,90,143,.12);transition:.25s ease}
-.topbar.shrink{height:50px;top:calc(env(safe-area-inset-top) + 6px)}
-.top-logo{height:36px;width:auto;display:block}.topbar.shrink .top-logo{height:30px}
-.report-link{padding:10px 14px;border-radius:15px;background:var(--navy);color:white;font-weight:900;font-size:12px;box-shadow:0 8px 20px rgba(11,59,120,.16)}
-
-/* reusable */
-.kicker{font-size:10px;letter-spacing:.24em;font-weight:900;text-transform:uppercase;color:#168ac5;margin-bottom:10px}
-.section-title{font-size:clamp(34px,10.5vw,49px);line-height:.98;letter-spacing:-.055em;margin:0;color:var(--navy)}
-.section-title .accent{color:#17a9df}
-.copy{font-size:16px;line-height:1.62;color:var(--muted);margin:14px 0 0}
-.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #d9eef9;color:#1c5d91;font-weight:800;font-size:12px;box-shadow:0 8px 20px rgba(42,123,176,.08)}
-
-/* hero */
-.hero{min-height:100svh;position:relative;padding:96px 22px 22px;display:flex;flex-direction:column;justify-content:flex-start;isolation:isolate;overflow:hidden}
-.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 28%,rgba(39,198,244,.22),transparent 33%),linear-gradient(180deg,#fff 0 57%,#e9f8ff 57% 100%);z-index:-5}
-.hero-grid{position:absolute;inset:0;opacity:.35;z-index:-3;background-image:linear-gradient(rgba(15,111,181,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(15,111,181,.08) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(to bottom,transparent,black 18%,black 78%,transparent)}
-.cloud{position:absolute;border-radius:999px;background:#fff;opacity:.94;filter:drop-shadow(0 7px 12px rgba(74,155,211,.06));animation:cloud 10s ease-in-out infinite alternate;z-index:-1}.cloud:before,.cloud:after{content:"";position:absolute;background:white;border-radius:50%}.cloud:before{width:55%;height:150%;left:12%;bottom:4%}.cloud:after{width:42%;height:120%;right:10%;bottom:4%}.cl1{width:118px;height:30px;left:-34px;top:120px}.cl2{width:105px;height:28px;right:-26px;top:250px;animation-delay:-5s}.cl3{width:130px;height:34px;left:8px;bottom:215px;animation-delay:-7s}@keyframes cloud{to{transform:translate3d(20px,7px,0)}}
-.logo-main{display:block;width:min(92%,390px);margin:4px auto 6px;filter:drop-shadow(0 18px 22px rgba(16,79,135,.13));animation:float 4.5s ease-in-out infinite}@keyframes float{50%{transform:translateY(-7px) rotate(-.35deg)}}
-.hero h1{font-size:clamp(38px,11.7vw,56px);line-height:.94;letter-spacing:-.06em;margin:10px auto 0;text-align:center;color:var(--navy);max-width:410px}.hero h1 span{color:#17a9df}
-.hero p{font-size:15.5px;line-height:1.58;color:#647e9b;text-align:center;max-width:370px;margin:16px auto 0}
-.hero-actions{display:flex;gap:9px;margin:20px auto 0;justify-content:center;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:18px;padding:14px 17px;font-weight:900;font-size:14px;min-width:148px;border:0}.btn.primary{color:white;background:linear-gradient(135deg,#22b8ef,#0b82dd);box-shadow:0 14px 28px rgba(15,143,224,.22)}.btn.secondary{background:white;color:var(--navy);border:1px solid #d8edf8;box-shadow:0 12px 25px rgba(43,112,161,.08)}
-.hero-world{position:relative;height:285px;margin:8px -22px -22px;overflow:hidden}
-.cityline{position:absolute;left:-2%;right:-2%;bottom:0;height:125px;background:linear-gradient(90deg,transparent 0 4%,#9fd9f4 4% 8%,transparent 8% 11%,#b4e4f8 11% 17%,transparent 17% 21%,#8fd2f1 21% 28%,transparent 28% 32%,#b7e5f8 32% 39%,transparent 39% 45%,#8bcef0 45% 52%,transparent 52% 58%,#b5e4f8 58% 64%,transparent 64% 69%,#8fd1f2 69% 76%,transparent 76% 81%,#b5e5f8 81% 88%,transparent 88% 93%,#91d3f2 93%);clip-path:polygon(0 100%,0 46%,5% 46%,5% 22%,9% 22%,9% 63%,14% 63%,14% 34%,19% 34%,19% 53%,24% 53%,24% 17%,31% 17%,31% 62%,38% 62%,38% 28%,45% 28%,45% 51%,51% 51%,51% 21%,58% 21%,58% 64%,64% 64%,64% 31%,71% 31%,71% 52%,77% 52%,77% 20%,85% 20%,85% 61%,91% 61%,91% 27%,97% 27%,97% 57%,100% 57%,100% 100%);opacity:.85}
-.hills{position:absolute;left:-8%;right:-8%;bottom:6px;height:82px;background:radial-gradient(circle at 9% 85%,#2ec577 0 12%,transparent 13%),radial-gradient(circle at 27% 79%,#3ed182 0 17%,transparent 18%),radial-gradient(circle at 49% 83%,#28bc70 0 15%,transparent 16%),radial-gradient(circle at 72% 80%,#43d581 0 17%,transparent 18%),radial-gradient(circle at 92% 84%,#2fc675 0 14%,transparent 15%)}
-.hero-orb{position:absolute;width:210px;height:210px;left:15px;bottom:25px;border-radius:50%;background:radial-gradient(circle at 36% 28%,rgba(255,255,255,.98),rgba(225,248,255,.9) 45%,rgba(56,186,237,.28));box-shadow:inset 0 0 0 2px #fff,0 22px 50px rgba(36,119,172,.17);animation:orbFloat 5s ease-in-out infinite}@keyframes orbFloat{50%{transform:translateY(-9px)}}
-.hero-orb:before{content:"";position:absolute;inset:13px;border-radius:50%;border:1px dashed rgba(15,113,182,.28);animation:spin 18s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.hero-orb svg{position:absolute;inset:22px;width:166px;height:166px}.flow{stroke-dasharray:8 9;animation:dash 2.2s linear infinite}@keyframes dash{to{stroke-dashoffset:-34}}
-.dora-card{position:absolute;right:-4px;bottom:2px;width:220px;height:235px;border-radius:38px 0 0 0;overflow:hidden;box-shadow:-12px -10px 32px rgba(25,106,166,.08);transform:rotate(1deg);animation:doraBob 4s ease-in-out infinite;background:white}.dora-card img{width:100%;height:100%;object-fit:cover;object-position:50% 50%}@keyframes doraBob{50%{transform:translateY(-8px) rotate(-1deg)}}
-.scrollcue{position:absolute;bottom:10px;left:26px;font-size:11px;color:#5f86a5;font-weight:900;letter-spacing:.08em;text-transform:uppercase;animation:bob 1.5s ease-in-out infinite}@keyframes bob{50%{transform:translateY(5px)}}
-
-/* overview */
-.overview{padding:90px 22px 70px;position:relative}.overview:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(45,193,240,.08);right:-160px;top:30px;filter:blur(3px)}
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:28px}.stat{min-height:120px;padding:16px;border-radius:24px;background:white;border:1px solid #dff0f9;box-shadow:var(--shadow);position:relative;overflow:hidden;transform:translateY(18px);opacity:0;transition:.7s cubic-bezier(.2,.8,.2,1)}.stat.show{transform:none;opacity:1}.stat .num{font-size:34px;font-weight:1000;letter-spacing:-.05em;color:var(--navy)}.stat .sub{font-size:13px;line-height:1.35;color:#718aa6;margin-top:4px}.stat:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;right:-20px;bottom:-24px;background:linear-gradient(135deg,rgba(42,195,241,.18),rgba(13,129,220,.06))}
-
-/* Story scenes */
-.story-intro{padding:80px 22px 30px;text-align:center}.story-intro .copy{max-width:360px;margin-left:auto;margin-right:auto}
-.scene{min-height:92svh;padding:74px 20px 24px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;isolation:isolate}.scene:before{content:"";position:absolute;inset:0;z-index:-3;background:linear-gradient(180deg,#f9fdff,#ecf8ff)}
-.scene.attack:before{background:linear-gradient(180deg,#fff8fa,#ffeef2 48%,#f5fbff)}.scene.detect:before{background:linear-gradient(180deg,#f8fdff,#e7f8ff 52%,#f8fdff)}.scene.decide:before{background:linear-gradient(180deg,#fbf9ff,#f1ecff 48%,#f6fbff)}.scene.heal:before{background:linear-gradient(180deg,#f8fff9,#e9fff0 48%,#f7fdff)}
-.scene .stage-no{font-size:11px;letter-spacing:.22em;font-weight:1000;color:#5986aa;text-transform:uppercase}.scene h3{font-size:clamp(40px,12vw,58px);letter-spacing:-.06em;line-height:.93;margin:9px 0 0;color:var(--navy)}.scene h3 span{color:var(--blue)}.scene.attack h3 span{color:var(--red)}.scene.decide h3 span{color:#7657db}.scene.heal h3 span{color:var(--green)}
-.scene .scene-copy{font-size:15px;line-height:1.58;color:#68829e;max-width:360px;margin:13px 0 0}
-.visual{height:420px;position:relative;margin-top:16px;border-radius:32px;overflow:hidden;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.86);box-shadow:0 24px 55px rgba(37,106,156,.12);transform:translateY(28px) scale(.98);opacity:0;transition:1s cubic-bezier(.2,.8,.2,1)}.scene.in .visual{transform:none;opacity:1}
-.visual .skyglow{position:absolute;width:290px;height:290px;border-radius:50%;left:50%;top:44%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(40,195,242,.19),transparent 68%)}
-.visual svg{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);width:290px;height:290px;overflow:visible}
-.node{fill:#fff;stroke:#0e8fe8;stroke-width:5;filter:drop-shadow(0 4px 6px rgba(11,80,135,.14));transform-origin:center}.link{stroke:#78c9ef;stroke-width:5;stroke-linecap:round}.pulse{animation:pulse 1.5s ease-in-out infinite}@keyframes pulse{50%{r:13;opacity:.55}}
-.attack .bad{fill:#ff3a4f;stroke:#fff;animation:bad 1s ease-in-out infinite}@keyframes bad{50%{filter:drop-shadow(0 0 12px #ff3a4f);transform:scale(1.15)}}
-.packet{position:absolute;width:20px;height:20px;border-radius:50%;background:var(--red);left:18px;top:205px;box-shadow:0 0 0 8px rgba(255,58,79,.10),0 0 22px rgba(255,58,79,.5);animation:packet 2.2s ease-in-out infinite}@keyframes packet{0%{transform:translateX(-10px) scale(.8)}60%{transform:translateX(180px) scale(1)}100%{transform:translateX(180px) scale(.25);opacity:.3}}
-.hacker{position:absolute;right:18px;top:24px;width:92px;height:92px;border-radius:28px;background:linear-gradient(145deg,#162945,#081427);display:grid;place-items:center;color:#ff4256;font-size:42px;box-shadow:0 16px 30px rgba(22,40,69,.22);animation:hacker 3s ease-in-out infinite}@keyframes hacker{50%{transform:translateY(-7px) rotate(-2deg)}}
-.scanline{position:absolute;left:26px;right:26px;height:4px;border-radius:4px;top:100px;background:linear-gradient(90deg,transparent,#18b9ef,transparent);box-shadow:0 0 20px #18b9ef;animation:scan 2.4s ease-in-out infinite}@keyframes scan{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(210px);opacity:1}}
-.magnify{position:absolute;right:26px;top:26px;width:84px;height:84px;border-radius:50%;border:9px solid #168bd7;background:rgba(255,255,255,.76);box-shadow:0 12px 28px rgba(24,135,207,.18);animation:mag 3.2s ease-in-out infinite}.magnify:after{content:"";position:absolute;width:34px;height:9px;border-radius:8px;background:#168bd7;right:-27px;bottom:-14px;transform:rotate(48deg)}@keyframes mag{50%{transform:translate(-16px,12px) rotate(-7deg)}}
-.ai-core{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:142px;height:142px;border-radius:36px;background:linear-gradient(145deg,#8e75e9,#5d3ecb);box-shadow:0 18px 40px rgba(94,62,203,.27);display:grid;place-items:center;color:#fff;font-size:56px;animation:ai 3.4s ease-in-out infinite}@keyframes ai{50%{transform:translate(-50%,-54%) rotate(3deg)}}
-.ai-core:before,.ai-core:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.35);border-radius:28px}.ai-core:before{inset:14px}.ai-core:after{inset:30px}
-.choice{position:absolute;padding:10px 14px;border-radius:999px;background:#fff;color:#5b47ba;font-size:11px;font-weight:1000;box-shadow:0 9px 22px rgba(83,65,171,.12);animation:choice 3s ease-in-out infinite}.c1{left:18px;top:105px}.c2{right:18px;top:122px;animation-delay:-1s}.c3{left:34px;bottom:55px;animation-delay:-1.7s}.c4{right:30px;bottom:47px;animation-delay:-2.2s}@keyframes choice{50%{transform:translateY(-7px)}}
-.shield{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);width:168px;height:192px;clip-path:polygon(50% 0,92% 15%,86% 68%,50% 100%,14% 68%,8% 15%);background:linear-gradient(155deg,#4fdf8b,#1fb967);box-shadow:0 20px 44px rgba(31,185,103,.22);display:grid;place-items:center;color:#fff;font-size:68px;animation:shield 3.4s ease-in-out infinite}@keyframes shield{50%{transform:translate(-50%,-53%) scale(1.035)}}
-.heal .node{stroke:#26c86d}.heal .link{stroke:#75dba4}.heal .visual:after{content:"GRID STABLE";position:absolute;left:50%;bottom:34px;transform:translateX(-50%);padding:11px 16px;border-radius:999px;background:#e9fff2;color:#179556;font-weight:1000;font-size:12px;letter-spacing:.08em;box-shadow:0 10px 25px rgba(39,198,107,.12)}
-.stage-strip{display:flex;gap:6px;margin-top:18px}.stage-chip{flex:1;text-align:center;padding:9px 5px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid #d8edf8;color:#7190ab;font-size:10px;font-weight:1000;letter-spacing:.08em}.attack .stage-chip:nth-child(1){background:#ffedf0;color:#d72d40;border-color:#ffcfd7}.detect .stage-chip:nth-child(2){background:#e7f8ff;color:#0b88d4;border-color:#c6edfb}.decide .stage-chip:nth-child(3){background:#f1edff;color:#6548ca;border-color:#dfd6ff}.heal .stage-chip:nth-child(4){background:#eafff0;color:#179a55;border-color:#c9f4d7}
-
-/* system cards */
-.system{padding:90px 22px 70px;background:linear-gradient(180deg,#fff,#eef9ff)}
-.system-head{text-align:center}.system-head .copy{max-width:360px;margin-left:auto;margin-right:auto}
-.cards{display:grid;gap:14px;margin-top:30px}.card{padding:20px;border-radius:28px;background:white;border:1px solid #dfeff8;box-shadow:var(--shadow);position:relative;overflow:hidden;transform:translateY(18px);opacity:0;transition:.7s ease}.card.show{transform:none;opacity:1}.card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.card-icon{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:27px;background:#edf8ff}.card h4{font-size:22px;margin:13px 0 5px;color:var(--navy);letter-spacing:-.025em}.card p{font-size:14px;line-height:1.55;color:#7188a1;margin:0}.card .big{font-size:44px;color:#e3f1f8;font-weight:1000;letter-spacing:-.08em}
-
-/* report */
-.report{padding:90px 22px 72px;background:linear-gradient(180deg,#f5fbff,#fff);text-align:center}.report .copy{max-width:350px;margin-left:auto;margin-right:auto}.poster-stage{margin:28px auto 0;width:min(88%,355px);perspective:900px;position:relative}.poster-stage:before{content:"";position:absolute;inset:18% -10% -7%;background:radial-gradient(circle,rgba(39,185,237,.22),transparent 68%);filter:blur(12px)}.poster{display:block;width:100%;border-radius:26px;box-shadow:0 30px 60px rgba(25,88,137,.22);transform:rotateX(4deg) rotateY(-3deg);transition:.25s ease;position:relative}.report-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
-
-/* contact */
-.contact{min-height:88svh;padding:90px 22px 60px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#f7fffa,#eafff1);position:relative;overflow:hidden}.ring{position:absolute;border:1px solid rgba(39,197,106,.18);border-radius:50%;left:50%;top:44%;transform:translate(-50%,-50%);animation:ring 4s ease-out infinite}.r1{width:180px;height:180px}.r2{width:280px;height:280px;animation-delay:-1.4s}.r3{width:390px;height:390px;animation-delay:-2.8s}@keyframes ring{50%{opacity:.18;transform:translate(-50%,-50%) scale(1.05)}}
-.wa{width:96px;height:96px;border-radius:30px;background:#25c86b;color:white;display:grid;place-items:center;font-size:48px;box-shadow:0 18px 42px rgba(37,200,107,.24);animation:wa 3s ease-in-out infinite;z-index:2}@keyframes wa{50%{transform:translateY(-8px) rotate(3deg)}}
-.contact .section-title{margin-top:20px;position:relative;z-index:2}.contact .copy{max-width:355px;position:relative;z-index:2}.wa-btn{margin-top:24px;padding:15px 20px;border-radius:18px;background:#25c86b;color:white;font-weight:1000;box-shadow:0 14px 30px rgba(37,200,107,.22);z-index:2}.micro{margin-top:16px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#87a093;z-index:2}.footer{padding:24px;text-align:center;background:#0b3b78;color:#cce9ff;font-size:12px;line-height:1.5}.footer b{color:#fff}
-
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PYPY 3D Control Center — AI-Driven Cyber-Physical Smart Grid</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/index-B0o_WuJI.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-C_1IYsdz.css">
 </head>
-<body>
-<div class="topbar" id="topbar">
-  <img src="pypy-logo.png" class="top-logo" alt="PYPY" />
-  <a class="report-link" href="#report">Report</a>
-</div>
-<main class="app">
-  <section class="hero" id="home">
-    <div class="hero-grid"></div><div class="cloud cl1"></div><div class="cloud cl2"></div><div class="cloud cl3"></div>
-    <div class="kicker" style="text-align:center">Universiti Malaysia Perlis · Smart Grid Cybersecurity</div>
-    <img class="logo-main" src="pypy-logo.png" alt="PYPY Smart Grid Cybersecurity System" />
-    <h1>Meet PYPY — a <span>full-software</span> smart-grid defence system.</h1>
-    <p>Built around an IEEE 39-Bus digital twin, AI threat detection, decision intelligence and verified self-healing — all demonstrated from one laptop.</p>
-    <div class="pill-row" style="justify-content:center"><span class="pill">IEEE 39-Bus</span><span class="pill">AI Detection</span><span class="pill">Self-Healing</span></div>
-    <div class="hero-actions"><a class="btn primary" href="#overview">Explore PYPY ↓</a><a class="btn secondary" href="#report">Read report</a></div>
-    <div class="hero-world" aria-hidden="true">
-      <div class="cityline"></div><div class="hills"></div>
-      <div class="hero-orb">
-        <svg viewBox="0 0 200 200" fill="none">
-          <path class="flow" d="M42 52 L98 36 L150 70 L136 132 L74 154 L42 52" stroke="#52bde9" stroke-width="5" stroke-linecap="round"/>
-          <path class="flow" d="M98 36 L74 154 M42 52 L136 132 M150 70 L74 154" stroke="#8dd7f3" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="42" cy="52" r="9" fill="#fff" stroke="#0e8fe8" stroke-width="5"/><circle cx="98" cy="36" r="9" fill="#fff" stroke="#0e8fe8" stroke-width="5"/><circle cx="150" cy="70" r="9" fill="#fff" stroke="#0e8fe8" stroke-width="5"/><circle cx="136" cy="132" r="9" fill="#fff" stroke="#0e8fe8" stroke-width="5"/><circle cx="74" cy="154" r="9" fill="#fff" stroke="#0e8fe8" stroke-width="5"/>
-        </svg>
+<body class="day-mode">
+  <!-- 3D WebGL Canvas Layer -->
+  <div id="canvas-container"></div>
+
+  <!-- Comic Toast Alert -->
+  <div id="comic-toast" class="comic-toast hidden">
+    <div class="toast-icon" id="toast-icon">⚡</div>
+    <div class="toast-body">
+      <h4 id="toast-title">ZAP! GRID SECURED</h4>
+      <p id="toast-desc">Sistem Imun AI beroperasi pada IEEE 39-Bus</p>
+    </div>
+  </div>
+
+  <!-- 1. Master Top Header Bar (Brand, KPIs & Actions) -->
+  <header class="master-header">
+    <div class="brand">
+      <div class="brand-avatar">
+        <img src="./assets/pypy_mascot.jpg" alt="PYPY Mascot" class="mascot-thumb" />
+        <span class="online-dot"></span>
       </div>
-      <div class="dora-card"><img src="doraemon.png" alt="Doraemon themed booth mascot" /></div>
-      <div class="scrollcue">Scroll to see the defence cycle ↓</div>
+      <div class="brand-text">
+        <div class="brand-title">
+          <span class="brand-pypy">PYPY 3D</span>
+          <span class="badge-role">PUSAT KAWALAN</span>
+        </div>
+        <div class="grid-badge" id="grid-status-badge">
+          <span class="status-indicator normal"></span>
+          <span id="grid-status-text">IEEE 39-BUS SECURED</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Live KPI Telemetry Pill -->
+    <div class="telemetry-bar">
+      <div class="tele-item">
+        <span class="tele-label">FREKUENSI</span>
+        <span class="tele-val" id="tele-freq">60.000 Hz</span>
+      </div>
+      <div class="tele-divider"></div>
+      <div class="tele-item">
+        <span class="tele-label">BEBAN</span>
+        <span class="tele-val" id="tele-load">6,150.8 MW</span>
+      </div>
+      <div class="tele-divider"></div>
+      <div class="tele-item">
+        <span class="tele-label">AI TRUST</span>
+        <span class="tele-val highlight-green" id="tele-trust">99.8%</span>
+      </div>
+      <div class="tele-divider"></div>
+      <div class="tele-item">
+        <span class="tele-label">ANCAMAN</span>
+        <span class="tele-val highlight-blue" id="tele-threat">TIADA</span>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <a href="https://github.com/demie24/PYPY" target="_blank" rel="noopener noreferrer" class="pill-btn github-btn" title="Buka Repositori PYPY di GitHub">
+        <svg class="gh-svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        <span class="star-gold">⭐</span>
+        <span>GitHub</span>
+      </a>
+      <button class="pill-btn demo-btn" id="btn-auto-demo" title="Jalankan Tur Panduan Pameran Automatik">
+        <span>🎬 Demo Pameran</span>
+      </button>
+      <button class="pill-btn toggle-hud-btn" id="btn-toggle-hud" title="Tunjuk / Sorok Panel Dashboard">
+        <span id="hud-toggle-text">👁️ Panel: Buka</span>
+      </button>
+      <button class="icon-btn" id="btn-theme" title="Tukar Mod Siang / Cyber-Night">
+        <span id="theme-icon">🌙</span>
+      </button>
+      <button class="icon-btn" id="btn-sound" title="Bunyi / Audio FX">
+        <span id="sound-icon">🔊</span>
+      </button>
+      <button class="icon-btn" id="btn-reset-cam" title="Tetapkan Semula Kamera 3D">
+        <span>🔄</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. Floating Navigation Sub-Bar (Dedicated Row for 8 Tabs) -->
+  <nav class="sub-nav-bar" id="sub-nav-bar">
+    <div class="nav-tabs-scroll">
+      <button class="nav-tab active" data-tab="overview"><span>📊</span> Ringkasan</button>
+      <button class="nav-tab" data-tab="grid"><span>⚡</span> 39-Bus Grid</button>
+      <button class="nav-tab" data-tab="detection"><span>🛡️</span> Deteksi AI</button>
+      <button class="nav-tab" data-tab="decision"><span>🧠</span> Keputusan AI</button>
+      <button class="nav-tab" data-tab="recovery"><span>🔄</span> Pemulihan FLISR</button>
+      <button class="nav-tab" data-tab="simulation"><span>🎯</span> Simulasi Serangan</button>
+      <button class="nav-tab" data-tab="forensics"><span>📜</span> Forensik MQTT</button>
+      <button class="nav-tab" data-tab="health"><span>💓</span> Kesihatan</button>
+    </div>
+  </nav>
+
+  <!-- 3. Left Dock: 3D Camera Controls & Live Waveform -->
+  <aside class="left-cam-dock">
+    <div class="dock-title">PANDANGAN 3D</div>
+    <div class="cam-btns-list">
+      <button class="cam-btn active" data-view="island">
+        <span class="cam-icon">🏝️</span>
+        <span class="cam-label">Pulau Grid</span>
+      </button>
+      <button class="cam-btn" data-view="substation">
+        <span class="cam-icon">⚡</span>
+        <span class="cam-label">Pencawang #32</span>
+      </button>
+      <button class="cam-btn" data-view="generators">
+        <span class="cam-icon">🏭</span>
+        <span class="cam-label">Janakuasa Pangkalan</span>
+      </button>
+      <button class="cam-btn" data-view="city">
+        <span class="cam-icon">🏙️</span>
+        <span class="cam-label">Bandar & Hospital</span>
+      </button>
+      <button class="cam-btn" data-view="mascot">
+        <span class="cam-icon">🐶</span>
+        <span class="cam-label">Maskot PYPY Jurutera</span>
+      </button>
+    </div>
+
+    <div class="dock-divider"></div>
+
+    <div class="waveform-box">
+      <div class="dock-title">AC 60 HZ OSCILLOSCOPE</div>
+      <canvas id="waveform-canvas" width="160" height="42"></canvas>
+      <div class="wave-stats">
+        <span>V: 1.025 pu</span>
+        <span id="wave-freq-text">60.00 Hz</span>
+      </div>
+    </div>
+
+    <!-- Compact Mascot Copilot Inside Dock to Prevent Any Overlap -->
+    <div class="dock-divider"></div>
+    <div class="dock-mascot-box">
+      <div class="dmb-head">
+        <img src="./assets/pypy_mascot.jpg" alt="PYPY Dog Engineer" class="dmb-avatar" />
+        <strong>PYPY Si Jurutera 🦺</strong>
+      </div>
+      <p class="dmb-text" id="speech-text">
+        Woof! Sistem grid 39-Bas bersedia. Saya menjaga pencawang elektrik anda! 🐾
+      </p>
+      <div class="dmb-btns">
+        <button class="mini-tag-btn" id="btn-mascot-cheer">🐶 Woof!</button>
+        <button class="mini-tag-btn" id="btn-mascot-scan">🔍 Hidu</button>
+        <button class="mini-tag-btn" id="btn-mascot-shield">🛡️ Perisai</button>
+        <a href="https://github.com/demie24/PYPY" target="_blank" rel="noopener noreferrer" class="mini-tag-btn github-mini-tag" title="Buka Kod Sumber di GitHub">⭐ GitHub</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 4. Floating Glassmorphic Dashboard Window (Right Side, Non-overlapping) -->
+  <section class="floating-hud-window" id="hud-window">
+    <div class="hud-header">
+      <div class="hud-title-group">
+        <span class="hud-icon" id="hud-tab-icon">📊</span>
+        <div>
+          <h3 id="hud-tab-title">Ringkasan Sistem (Overview)</h3>
+          <span class="hud-subtitle" id="hud-tab-subtitle">Gambaran Menyeluruh Status Grid & Pertahanan AI</span>
+        </div>
+      </div>
+      <div class="hud-controls">
+        <button class="hud-action-btn" id="btn-minimize-hud" title="Tutup / Buka Panel">✕</button>
+      </div>
+    </div>
+
+    <div class="hud-body">
+
+      <!-- TAB 1: OVERVIEW -->
+      <div class="tab-pane active" id="pane-overview">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>🌐 Status Digital Twin IEEE 39-Bus</h4>
+            <span class="badge-tag green">NORMAL OPERATIONAL</span>
+          </div>
+          <div class="kpi-grid-4">
+            <div class="kpi-mini">
+              <span class="km-lbl">39 Bas Grid</span>
+              <strong class="km-val">39 / 39 Sah</strong>
+            </div>
+            <div class="kpi-mini">
+              <span class="km-lbl">10 Penjana Kuasa</span>
+              <strong class="km-val">6,192.4 MW</strong>
+            </div>
+            <div class="kpi-mini">
+              <span class="km-lbl">Inersia Grid (H)</span>
+              <strong class="km-val">4.20 s</strong>
+            </div>
+            <div class="kpi-mini">
+              <span class="km-lbl">46 Talian Suis</span>
+              <strong class="km-val">46 / 46 Closed</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>🛡️ Status 4 Model Sistem Imun AI</h4>
+            <span class="badge-tag blue">ENSEMBLE PARALLEL</span>
+          </div>
+          <div class="model-status-stack">
+            <div class="mss-item">
+              <span>🧠 LSTM (Siri Masa):</span>
+              <strong class="green" id="ov-lstm-val">Risiko 0.02 (Selamat)</strong>
+            </div>
+            <div class="mss-item">
+              <span>🕸️ GNN (Topologi):</span>
+              <strong class="green" id="ov-gnn-val">Risiko 0.03 (Normal)</strong>
+            </div>
+            <div class="mss-item">
+              <span>⏱️ ST-GNN (Aliran Kuasa):</span>
+              <strong class="green" id="ov-stgnn-val">Risiko 0.01 (Stabil)</strong>
+            </div>
+            <div class="mss-item">
+              <span>⚡ PINN (Fizik Kirchhoff):</span>
+              <strong class="green" id="ov-pinn-val">Residu 0.002 MW (100% Sah)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>🔄 Protokol Pemulihan Level 6 (FLISR)</h4>
+            <span class="badge-tag purple">PPO + DQN CONSENSUS</span>
+          </div>
+          <div class="l6-chips-row">
+            <span class="l6-pill active">✅ 1. OPEN Sah</span>
+            <span class="l6-pill active">✅ 2. Sekat Arahan</span>
+            <span class="l6-pill active">✅ 3. Konsensus AI</span>
+            <span class="l6-pill active">✅ 4. AC Menumpu</span>
+            <span class="l6-pill active">✅ 5. CLOSE Dihantar</span>
+            <span class="l6-pill active highlight">🛡️ 6. GRID SECURED</span>
+          </div>
+        </div>
+
+        <div class="dash-card project-repo-card">
+          <div class="card-head">
+            <h4>⭐ Repositori Kod Sumber & Dokumentasi Tesis</h4>
+            <span class="badge-tag green">OPEN SOURCE</span>
+          </div>
+          <p class="card-desc">Penyelidikan keselamatan siber grid pintar berasaskan model IEEE 39-Bus, AI multi-model & pemulihan autonomi di Universiti Malaysia Perlis (UniMAP).</p>
+          <div style="margin-top: 10px;">
+            <a href="https://github.com/demie24/PYPY" target="_blank" rel="noopener noreferrer" class="pill-btn github-btn" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:7px 12px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              <span class="star-gold">⭐</span>
+              <span>Buka Repositori PYPY di GitHub</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LIVE GRID 3D (39-BUS MATRIX) -->
+      <div class="tab-pane" id="pane-grid">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>⚡ Matriks Lengkap Sistem IEEE 39-Bus</h4>
+            <span class="badge-tag blue">39 BAS KESELURUHAN</span>
+          </div>
+          <p class="card-desc">Sistem mengandungi 39 bas (Bas 1–29 Beban/Talian, Bas 30–39 Penjana Kuasa). Klik mana-mana bas di bawah untuk semakan:</p>
+
+          <div class="matrix-legend-row">
+            <span class="mlr-item"><span class="chip-color load"></span> B1–B29: Beban/Talian</span>
+            <span class="mlr-item"><span class="chip-color gen"></span> B30–B39: Penjana</span>
+            <span class="mlr-item"><span class="chip-color target"></span> B32: Pencawang G3</span>
+          </div>
+
+          <div class="full-39-bus-matrix" id="full-39-bus-matrix">
+            <!-- 39 Bus chips populated dynamically -->
+          </div>
+
+          <div class="bus-inspection-card" id="bus-inspection-card">
+            <h4 id="bic-title">⚡ Bas #32 — Pencawang Pengagihan Utama & Penjana G3</h4>
+            <div class="bic-specs">
+              <div>Voltan: <strong id="bic-v">1.025 p.u.</strong></div>
+              <div>Kuasa: <strong id="bic-p">650.0 MW</strong></div>
+              <div>Reaktif: <strong id="bic-q">250.0 MVAR</strong></div>
+              <div>Status: <strong class="green" id="bic-status">NORMAL (SECURED)</strong></div>
+            </div>
+            <p id="bic-desc">Stesen pencawang utama voltan tinggi menghubungkan Penjana 3 dan sistem penghantaran wilayah timur.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: CYBER DETECTION -->
+      <div class="tab-pane" id="pane-detection">
+        <div class="detection-stack">
+          <div class="dash-card">
+            <div class="card-head">
+              <h4>🧠 LSTM Temporal Detector</h4>
+              <span class="badge-tag" id="tag-lstm">RISIKO: 0.02</span>
+            </div>
+            <p class="detector-desc">Menganalisis anomali siri masa voltan dan arus berfrekuensi tinggi untuk mengesan manipulasi fasa.</p>
+            <div class="meter-bar"><div class="meter-fill" id="mf-lstm" style="width: 2%;"></div></div>
+            <div class="detector-meta">
+              <span>Ambang: 0.65</span>
+              <span id="dt-lstm-stat">Status: Selamat (Z-Score = 0.4)</span>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="card-head">
+              <h4>🕸️ GNN Topologi Detector</h4>
+              <span class="badge-tag" id="tag-gnn">RISIKO: 0.03</span>
+            </div>
+            <p class="detector-desc">Memodelkan struktur graf rangkaian 39-bus untuk mengesan anomali spatial jiran penderia.</p>
+            <div class="meter-bar"><div class="meter-fill" id="mf-gnn" style="width: 3%;"></div></div>
+            <div class="detector-meta">
+              <span>Ambang: 0.60</span>
+              <span id="dt-gnn-stat">Status: Topologi Sah (Normal)</span>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="card-head">
+              <h4>⏱️ ST-GNN Spatio-Temporal</h4>
+              <span class="badge-tag" id="tag-stgnn">RISIKO: 0.01</span>
+            </div>
+            <p class="detector-desc">Menganalisis penyebaran aliran kuasa dinamik merentasi talian untuk mengesan kelewatan DDoS.</p>
+            <div class="meter-bar"><div class="meter-fill" id="mf-stgnn" style="width: 1%;"></div></div>
+            <div class="detector-meta">
+              <span>Ambang: 0.70</span>
+              <span id="dt-stgnn-stat">Status: Aliran Kuasa Normal</span>
+            </div>
+          </div>
+
+          <div class="dash-card highlight-pinn-card">
+            <div class="card-head">
+              <h4>⚡ PINN Pengesah Fizik (Kirchhoff)</h4>
+              <span class="badge-tag amber" id="tag-pinn">RESIDU: 0.002 MW</span>
+            </div>
+            <p class="detector-desc">Mengesahkan pematuhan hukum Kirchhoff (KCL/KVL). Mengesan pemalsuan data penderia (FDI).</p>
+            <div class="meter-bar"><div class="meter-fill" id="mf-pinn" style="width: 2%;"></div></div>
+            <div class="detector-meta">
+              <span>Had Toleransi: 0.050 MW</span>
+              <strong class="green" id="dt-pinn-stat">Status: KCL/KVL 100% Patuh</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: AI DECISION -->
+      <div class="tab-pane" id="pane-decision">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>⚖️ Enjin Gabungan Bukti AI (Fusion)</h4>
+            <span class="badge-tag blue">CALIBRATED FUSION</span>
+          </div>
+          <div class="fusion-score-box">
+            <div class="fs-item">
+              <span class="fs-lbl">Indeks Kepercayaan Grid</span>
+              <strong class="fs-val green" id="dec-trust">99.8%</strong>
+            </div>
+            <div class="fs-item">
+              <span class="fs-lbl">Skor Ancaman Keseluruhan</span>
+              <strong class="fs-val blue" id="dec-threat">0.02 (Selamat)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>🤖 Konsensus Dwi-Ejen RL (PPO + DQN)</h4>
+            <span class="badge-tag green">100% PERSATUAN</span>
+          </div>
+          <div class="rl-compare-table">
+            <div class="rct-row">
+              <span>Ejen PPO (Kawalan Voltan):</span>
+              <strong>Voltage Trim [Bus 32: +0.01 pu]</strong>
+            </div>
+            <div class="rct-row">
+              <span>Ejen DQN (Konfigurasi Suis):</span>
+              <strong>Breaker Reconnect Feeder #4</strong>
+            </div>
+            <div class="rct-row">
+              <span>Pengesah AC Newton-Raphson:</span>
+              <strong class="green">Solver Menumpu dalam 3 Lelaran</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SELF-HEALING FLISR -->
+      <div class="tab-pane" id="pane-recovery">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>🔄 Protokol Keselamatan Level 6 (FLISR)</h4>
+            <span class="badge-tag green">VERIFIED AUTONOMOUS</span>
+          </div>
+          <p class="card-desc">Pemulihan mewajibkan 6 langkah pengesahan keselamatan sebelum suis dibenarkan ditutup semula:</p>
+
+          <div class="l6-full-stepper" id="l6-full-stepper">
+            <div class="l6-step-box done" id="step-box-1">
+              <div class="sb-num">1</div>
+              <div class="sb-info"><strong>Breaker OPEN Dikesan</strong><span>Status suis disahkan terbuka</span></div>
+            </div>
+            <div class="l6-step-box done" id="step-box-2">
+              <div class="sb-num">2</div>
+              <div class="sb-info"><strong>Arahan Palsu Disekat</strong><span>Penderia ditapis oleh AI Guard</span></div>
+            </div>
+            <div class="l6-step-box done" id="step-box-3">
+              <div class="sb-num">3</div>
+              <div class="sb-info"><strong>Kelulusan Konsensus AI</strong><span>Konsensus PPO & DQN diluluskan</span></div>
+            </div>
+            <div class="l6-step-box done" id="step-box-4">
+              <div class="sb-num">4</div>
+              <div class="sb-info"><strong>AC Solver Menumpu</strong><span>Kestabilan voltan disahkan</span></div>
+            </div>
+            <div class="l6-step-box done" id="step-box-5">
+              <div class="sb-num">5</div>
+              <div class="sb-info"><strong>Arahan CLOSE Dihantar</strong><span>Isyarat selamat dihantar ke suis</span></div>
+            </div>
+            <div class="l6-step-box done highlight" id="step-box-6">
+              <div class="sb-num">6</div>
+              <div class="sb-info"><strong>GRID SECURED (Level 6)</strong><span>Telemetri baharu sah selamat!</span></div>
+            </div>
+          </div>
+
+          <div class="recovery-actions-bar">
+            <button class="btn-card defense" id="btn-tab-recover">
+              <div class="bc-icon pulse-shield">🛡️</div>
+              <div class="bc-content">
+                <div class="bc-name">JALANKAN PEMULIHAN AUTONOMI (AI)</div>
+                <div class="bc-desc">Laksanakan 6 Langkah Pengesahan Keselamatan & Pulihkan Grid</div>
+              </div>
+              <span class="bc-tag green">PULIHKAN</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: ATTACK SIMULATION -->
+      <div class="tab-pane" id="pane-simulation">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>🎯 Cyber Range: Simulasi Serangan</h4>
+            <span class="badge-tag red">CYBER RANGE</span>
+          </div>
+          <p class="card-desc">Pilih mana-mana serangan di bawah untuk melihat animasi 3D dan tindak balas sistem imun AI:</p>
+
+          <div class="sim-buttons-stack">
+            <button class="btn-card attack" data-attack="fdi">
+              <div class="bc-icon">⚡</div>
+              <div class="bc-content">
+                <div class="bc-name">FDI Attack (Suntikan Data Palsu)</div>
+                <div class="bc-desc">Memanipulasi bacaan penderia Bus #32. Model PINN mengesan pelanggaran Kirchhoff.</div>
+              </div>
+              <span class="bc-tag red">SERANG</span>
+            </button>
+
+            <button class="btn-card attack" data-attack="ddos">
+              <div class="bc-icon">👾</div>
+              <div class="bc-content">
+                <div class="bc-name">DDoS Cyber Storm</div>
+                <div class="bc-desc">Banjir paket trafik SCADA / MQTT. Model ST-GNN mengesan kelewatan telemetri.</div>
+              </div>
+              <span class="bc-tag red">SERANG</span>
+            </button>
+
+            <button class="btn-card attack" data-attack="ransom">
+              <div class="bc-icon">🔒</div>
+              <div class="bc-content">
+                <div class="bc-name">Ransomware Breaker Lockout</div>
+                <div class="bc-desc">Mengunci suis Feeder #4 ke posisi OPEN. Model LSTM mengesan penurunan beban mendadak.</div>
+              </div>
+              <span class="bc-tag red">SERANG</span>
+            </button>
+
+            <button class="btn-card attack" data-attack="trip">
+              <div class="bc-icon">💥</div>
+              <div class="bc-content">
+                <div class="bc-name">Line 14-15 Trip (Kontinjensi N-1)</div>
+                <div class="bc-desc">Kegagalan talian penghantaran utama. Kuasa melencong menyebabkan risiko blackout.</div>
+              </div>
+              <span class="bc-tag red">SERANG</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: LOGS & FORENSICS -->
+      <div class="tab-pane" id="pane-forensics">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>📜 Log Forensik & Jejak Audit MQTT</h4>
+            <span class="badge-tag blue">LIVE STREAM</span>
+          </div>
+          <div class="forensics-search-bar">
+            <input type="text" id="log-search-input" placeholder="Cari topik MQTT, nama model, atau nombor bas..." />
+            <button class="mini-btn" id="btn-clear-logs">Kosongkan</button>
+          </div>
+          <div class="forensics-terminal" id="forensics-terminal">
+            <!-- Logs injected dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: SYSTEM HEALTH -->
+      <div class="tab-pane" id="pane-health">
+        <div class="dash-card">
+          <div class="card-head">
+            <h4>💓 Kesihatan Perkhidmatan & Kontena</h4>
+            <span class="badge-tag green">SEMUA PERKHIDMATAN ONLINE</span>
+          </div>
+          <div class="services-list" id="services-table">
+            <!-- Services rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <section class="overview" id="overview">
-    <div class="kicker">What is PYPY?</div>
-    <h2 class="section-title">The grid becomes a <span class="accent">living digital system.</span></h2>
-    <p class="copy">PYPY models a power system digitally, watches its cyber-physical behaviour and coordinates the full defence lifecycle without needing a physical smart-grid rig.</p>
-    <div class="stat-grid">
-      <div class="stat"><div class="num">39</div><div class="sub">IEEE buses inside the AC digital twin</div></div>
-      <div class="stat"><div class="num">AI</div><div class="sub">Threat detection and localisation pipeline</div></div>
-      <div class="stat"><div class="num">TRUST</div><div class="sub">Evidence-aware decision support</div></div>
-      <div class="stat"><div class="num">HEAL</div><div class="sub">Verified autonomous recovery workflow</div></div>
-    </div>
-  </section>
-
-  <section class="story-intro">
-    <div class="kicker">One grid · four moves</div>
-    <h2 class="section-title">Attack. Detect. Decide. <span class="accent">Heal.</span></h2>
-    <p class="copy">Each scene below tells one part of the PYPY defence cycle. The animation explains the idea; the live booth demo shows the real system.</p>
-  </section>
-
-  <section class="scene attack">
-    <div class="stage-no">01 · Attack</div>
-    <h3>A threat <span>disturbs</span> the grid.</h3>
-    <p class="scene-copy">Cyber events such as false data injection or communication disruption alter part of the digital power system.</p>
-    <div class="visual">
-      <div class="skyglow"></div><div class="hacker">☠</div><div class="packet"></div>
-      <svg viewBox="0 0 300 300" fill="none">
-        <line class="link" x1="58" y1="70" x2="150" y2="48"/><line class="link" x1="150" y1="48" x2="242" y2="92"/><line class="link" x1="58" y1="70" x2="82" y2="205"/><line class="link" x1="82" y1="205" x2="188" y2="230"/><line class="link" x1="188" y1="230" x2="242" y2="92"/><line class="link" x1="150" y1="48" x2="188" y2="230"/>
-        <circle class="node" cx="58" cy="70" r="10"/><circle class="node" cx="150" cy="48" r="10"/><circle class="node bad" cx="242" cy="92" r="12"/><circle class="node" cx="82" cy="205" r="10"/><circle class="node" cx="188" cy="230" r="10"/>
-      </svg>
-    </div>
-    <div class="stage-strip"><div class="stage-chip">ATTACK</div><div class="stage-chip">DETECT</div><div class="stage-chip">DECIDE</div><div class="stage-chip">HEAL</div></div>
-  </section>
-
-  <section class="scene detect">
-    <div class="stage-no">02 · Detect</div>
-    <h3>PYPY <span>looks for evidence.</span></h3>
-    <p class="scene-copy">Telemetry is checked for abnormal cyber-physical behaviour so suspicious activity can be detected and localised.</p>
-    <div class="visual">
-      <div class="skyglow"></div><div class="scanline"></div><div class="magnify"></div>
-      <svg viewBox="0 0 300 300" fill="none">
-        <line class="link" x1="58" y1="70" x2="150" y2="48"/><line class="link" x1="150" y1="48" x2="242" y2="92"/><line class="link" x1="58" y1="70" x2="82" y2="205"/><line class="link" x1="82" y1="205" x2="188" y2="230"/><line class="link" x1="188" y1="230" x2="242" y2="92"/><line class="link" x1="150" y1="48" x2="188" y2="230"/>
-        <circle class="node" cx="58" cy="70" r="10"/><circle class="node pulse" cx="150" cy="48" r="10"/><circle class="node" cx="242" cy="92" r="10"/><circle class="node" cx="82" cy="205" r="10"/><circle class="node pulse" cx="188" cy="230" r="10"/>
-      </svg>
-    </div>
-    <div class="stage-strip"><div class="stage-chip">ATTACK</div><div class="stage-chip">DETECT</div><div class="stage-chip">DECIDE</div><div class="stage-chip">HEAL</div></div>
-  </section>
-
-  <section class="scene decide">
-    <div class="stage-no">03 · Decide</div>
-    <h3>AI evaluates <span>what to do next.</span></h3>
-    <p class="scene-copy">Detection evidence is combined with grid context so PYPY can support a defensible response rather than showing a black-box decision.</p>
-    <div class="visual">
-      <div class="ai-core">AI</div><div class="choice c1">ISOLATE</div><div class="choice c2">BLOCK</div><div class="choice c3">REROUTE</div><div class="choice c4">VERIFY</div>
-    </div>
-    <div class="stage-strip"><div class="stage-chip">ATTACK</div><div class="stage-chip">DETECT</div><div class="stage-chip">DECIDE</div><div class="stage-chip">HEAL</div></div>
-  </section>
-
-  <section class="scene heal">
-    <div class="stage-no">04 · Heal</div>
-    <h3>The grid <span>returns to stability.</span></h3>
-    <p class="scene-copy">Recovery is only presented as successful when the system has evidence that stable operation has actually been restored.</p>
-    <div class="visual">
-      <div class="skyglow"></div><div class="shield">✓</div>
-      <svg viewBox="0 0 300 300" fill="none" style="opacity:.45">
-        <line class="link" x1="58" y1="70" x2="150" y2="48"/><line class="link" x1="150" y1="48" x2="242" y2="92"/><line class="link" x1="58" y1="70" x2="82" y2="205"/><line class="link" x1="82" y1="205" x2="188" y2="230"/><line class="link" x1="188" y1="230" x2="242" y2="92"/><line class="link" x1="150" y1="48" x2="188" y2="230"/>
-        <circle class="node" cx="58" cy="70" r="10"/><circle class="node" cx="150" cy="48" r="10"/><circle class="node" cx="242" cy="92" r="10"/><circle class="node" cx="82" cy="205" r="10"/><circle class="node" cx="188" cy="230" r="10"/>
-      </svg>
-    </div>
-    <div class="stage-strip"><div class="stage-chip">ATTACK</div><div class="stage-chip">DETECT</div><div class="stage-chip">DECIDE</div><div class="stage-chip">HEAL</div></div>
-  </section>
-
-  <section class="system">
-    <div class="system-head"><div class="kicker">Inside PYPY</div><h2 class="section-title">Different tools. <span class="accent">One defence mission.</span></h2><p class="copy">The technical depth stays behind the interface, but every layer has a clear role.</p></div>
-    <div class="cards">
-      <article class="card"><div class="card-top"><div class="card-icon">⚡</div><div class="big">01</div></div><h4>IEEE 39-Bus Digital Twin</h4><p>AC power-system behaviour provides the cyber-physical environment where attacks and recovery can be evaluated safely.</p></article>
-      <article class="card"><div class="card-top"><div class="card-icon">🔎</div><div class="big">02</div></div><h4>AI Detection</h4><p>Monitoring and localisation modules identify suspicious behaviour and create evidence for downstream decisions.</p></article>
-      <article class="card"><div class="card-top"><div class="card-icon">🧠</div><div class="big">03</div></div><h4>Decision Intelligence</h4><p>Threat evidence and system context are combined so the response can be explained rather than simply asserted.</p></article>
-      <article class="card"><div class="card-top"><div class="card-icon">🛡️</div><div class="big">04</div></div><h4>Self-Healing</h4><p>Recovery logic aims to restore stable operation and verify the outcome before declaring the grid secure.</p></article>
-    </div>
-  </section>
-
-  <section class="report" id="report">
-    <div class="kicker">Project report</div><h2 class="section-title">The full <span class="accent">engineering story.</span></h2><p class="copy">The final technical report will be published here after it has been formally approved.</p>
-    <div class="poster-stage" id="posterStage"><img class="poster" id="poster" src="pypy-poster.png" alt="PYPY poster preview" /></div>
-    <div class="report-actions"><span class="btn secondary" style="cursor:default;opacity:.72">Final report will be available after approval</span></div>
-  </section>
-
-  <section class="contact" id="contact">
-    <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
-    <div class="wa">💬</div><div class="kicker" style="margin-top:24px;z-index:2">Continue the conversation</div><h2 class="section-title">Want to know <span class="accent">more about PYPY?</span></h2><p class="copy">If you saw the project at the exhibition and want to discuss the report, implementation or future work, continue directly on WhatsApp.</p>
-    <a class="wa-btn" id="waLink" href="#">Chat with Demirel on WhatsApp ↗</a><div class="micro">WhatsApp link will be activated before QR production</div>
-  </section>
-  <footer class="footer"><b>PYPY</b> · Smart Grid Cybersecurity System<br/>Universiti Malaysia Perlis</footer>
-</main>
-<script>
-const topbar=document.getElementById('topbar');
-addEventListener('scroll',()=>topbar.classList.toggle('shrink',scrollY>80),{passive:true});
-
-const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.16});
-document.querySelectorAll('.stat,.card').forEach(el=>io.observe(el));
-const scenes=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.22});
-document.querySelectorAll('.scene').forEach(el=>scenes.observe(el));
-
-const poster=document.getElementById('poster'), stage=document.getElementById('posterStage');
-stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;poster.style.transform=`rotateX(${4-y*7}deg) rotateY(${-3+x*8}deg) translateY(${-Math.abs(x)*3}px)`});
-stage.addEventListener('pointerleave',()=>poster.style.transform='rotateX(4deg) rotateY(-3deg)');
-
-const WHATSAPP_NUMBER='60198137547';
-const wa=document.getElementById('waLink');
-if(WHATSAPP_NUMBER){wa.href=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi Demirel, I saw your PYPY project and would like to know more about it.')}`;document.querySelector('.micro').textContent='Opens WhatsApp with a prepared message';}
-else wa.addEventListener('click',e=>{e.preventDefault();alert('WhatsApp number has not been added yet. It will be connected before the QR is printed.');});
-</script>
 </body>
 </html>
