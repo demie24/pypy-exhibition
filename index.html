@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-F8iDxJE_.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-C2ZQu7zI.css">
+  <script type="module" crossorigin src="./assets/index-wUbAVoeG.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-B16No_r4.css">
 </head>
 <body class="day-mode">
   <!-- 3D WebGL Canvas Layer -->
@@ -190,6 +190,26 @@
 
       <!-- TAB 1: OVERVIEW -->
       <div class="tab-pane active" id="pane-overview">
+        <!-- DUAL DYNAMIC INDUSTRIAL GAUGES -->
+        <div class="dash-card gauges-card">
+          <div class="card-head">
+            <h4>⚡ Telemetri SCADA Analog & Digital</h4>
+            <span class="badge-tag green" id="gauge-status-badge">60.00 Hz NORMAL</span>
+          </div>
+          <div class="gauges-container">
+            <div class="gauge-box">
+              <canvas id="gauge-freq-canvas" width="200" height="135" class="gauge-canvas"></canvas>
+              <div class="gauge-title">FREKUENSI SISTEM (Hz)</div>
+              <div class="gauge-val-readout" id="gauge-freq-val">60.000 Hz</div>
+            </div>
+            <div class="gauge-box">
+              <canvas id="gauge-load-canvas" width="200" height="135" class="gauge-canvas"></canvas>
+              <div class="gauge-title">BEBAN AKTIF KESELURUHAN</div>
+              <div class="gauge-val-readout" id="gauge-load-val">6,192.4 MW</div>
+            </div>
+          </div>
+        </div>
+
         <div class="dash-card">
           <div class="card-head">
             <h4>🌐 Status Digital Twin IEEE 39-Bus</h4>
@@ -236,6 +256,24 @@
             <div class="mss-item">
               <span>⚡ PINN (Fizik Kirchhoff):</span>
               <strong class="green" id="ov-pinn-val">Residu 0.002 MW (100% Sah)</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-MODEL AI RADAR PROFILE -->
+        <div class="dash-card radar-card">
+          <div class="card-head">
+            <h4>🧠 Profil Keselamatan 4-Model Sistem Imun AI</h4>
+            <span class="badge-tag blue">ENSEMBLE RADAR</span>
+          </div>
+          <p class="card-desc">Skor keyakinan & kestabilan fizik bagi 4 model AI pertahanan:</p>
+          <div class="radar-container">
+            <canvas id="ai-radar-canvas" width="300" height="210" class="radar-canvas"></canvas>
+            <div class="radar-legend">
+              <span class="rl-item pinn">● PINN Kirchhoff: 99.8%</span>
+              <span class="rl-item gnn">● GNN Topologi: 97.0%</span>
+              <span class="rl-item stgnn">● ST-GNN Kuasa: 99.0%</span>
+              <span class="rl-item lstm">● LSTM Masa: 98.0%</span>
             </div>
           </div>
         </div>
@@ -288,8 +326,54 @@
             <span class="mlr-item"><span class="chip-color target"></span> B32: Pencawang G3</span>
           </div>
 
-          <div class="full-39-bus-matrix" id="full-39-bus-matrix">
-            <!-- 39 Bus chips populated dynamically -->
+          <!-- TOPOLOGY SINGLE-LINE DIAGRAM -->
+          <div class="dash-card topology-card">
+            <div class="card-head">
+              <h4>🗺️ Gambar Rajah Satu Garisan (Single-Line Diagram IEEE 39)</h4>
+              <span class="badge-tag blue">LIVE CORRIDORS</span>
+            </div>
+            <p class="card-desc">Topologi New England 39-bas dengan aliran kuasa masa nyata (Garisan Emas: Janakuasa G1-G10, Biru: Beban/Transmisi):</p>
+            <div class="sld-wrapper">
+              <svg id="sld-svg" viewBox="0 0 460 180" class="sld-svg">
+                <!-- Transmission Links -->
+                <path class="sld-line" d="M 50 40 L 140 40 L 220 30 L 320 40 L 410 40" />
+                <path class="sld-line" d="M 50 40 L 80 110 L 160 140 L 250 140 L 340 120 L 410 40" />
+                <path class="sld-line" d="M 140 40 L 160 140" />
+                <path class="sld-line" d="M 220 30 L 250 140" />
+                <path class="sld-line" d="M 320 40 L 340 120" />
+                <path class="sld-line pwr-pulse" d="M 220 30 L 220 90 L 160 140" />
+                <path class="sld-line target-line" d="M 220 90 L 300 90" id="sld-line-bus32" />
+
+                <!-- Generator Buses (30-39) -->
+                <circle cx="50" cy="40" r="12" class="sld-node gen" />
+                <text x="50" y="44" class="sld-lbl">G1</text>
+
+                <circle cx="220" cy="30" r="12" class="sld-node gen" />
+                <text x="220" y="34" class="sld-lbl">G2</text>
+
+                <circle cx="410" cy="40" r="12" class="sld-node gen" />
+                <text x="410" y="44" class="sld-lbl">G10</text>
+
+                <circle cx="300" cy="90" r="14" class="sld-node target" id="sld-bus32" />
+                <text x="300" y="94" class="sld-lbl target-lbl">B32</text>
+
+                <!-- Load Buses -->
+                <circle cx="140" cy="40" r="8" class="sld-node load" />
+                <text x="140" y="43" class="sld-lbl-sm">B4</text>
+                <circle cx="320" cy="40" r="8" class="sld-node load" />
+                <text x="320" y="43" class="sld-lbl-sm">B14</text>
+                <circle cx="80" cy="110" r="8" class="sld-node load" />
+                <text x="80" y="113" class="sld-lbl-sm">B8</text>
+                <circle cx="160" cy="140" r="8" class="sld-node load" />
+                <text x="160" y="143" class="sld-lbl-sm">B5</text>
+                <circle cx="250" cy="140" r="8" class="sld-node load" />
+                <text x="250" y="143" class="sld-lbl-sm">B18</text>
+                <circle cx="340" cy="120" r="8" class="sld-node load" />
+                <text x="340" y="123" class="sld-lbl-sm">B24</text>
+                <circle cx="220" cy="90" r="8" class="sld-node load" />
+                <text x="220" y="93" class="sld-lbl-sm">B16</text>
+              </svg>
+            </div>
           </div>
 
           <div class="bus-inspection-card" id="bus-inspection-card">
@@ -308,6 +392,22 @@
       <!-- TAB 3: CYBER DETECTION -->
       <div class="tab-pane" id="pane-detection">
         <div class="detection-stack">
+          <!-- LIVE 3-PHASE AC OSCILLOSCOPE -->
+          <div class="dash-card oscilloscope-card">
+            <div class="card-head">
+              <h4>〰️ Bentuk Gelombang AC 3-Fasa (60 Hz Real-Time)</h4>
+              <span class="badge-tag green" id="scope-status-badge">SINE WAVE NORMAL</span>
+            </div>
+            <p class="card-desc">Memantau kualiti kuasa gelombang tiga fasa (Va, Vb, Vc). Gangguan harmonik & lonjakan voltan dikesan serta-merta semasa serangan:</p>
+            <div class="scope-container">
+              <canvas id="scope-3phase-canvas" width="440" height="130" class="scope-canvas"></canvas>
+              <div class="scope-phase-readouts">
+                <span class="phase-chip va"><span class="dot-va"></span> Fasa A (Va): 1.025 pu</span>
+                <span class="phase-chip vb"><span class="dot-vb"></span> Fasa B (Vb): 1.022 pu</span>
+                <span class="phase-chip vc"><span class="dot-vc"></span> Fasa C (Vc): 1.028 pu</span>
+              </div>
+            </div>
+          </div>
           <div class="dash-card">
             <div class="card-head">
               <h4>🧠 LSTM Temporal Detector</h4>
