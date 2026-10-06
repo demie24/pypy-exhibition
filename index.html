@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-DWPrcRBQ.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-CJBO21h2.css">
+  <script type="module" crossorigin src="./assets/index-BKqgbOSq.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BDqBKUNH.css">
 </head>
 <body class="day-mode">
   <!-- 3D WebGL Canvas Layer -->
@@ -76,6 +76,9 @@
         <span class="star-gold">⭐</span>
         <span>GitHub</span>
       </a>
+      <button class="pill-btn scada-btn" id="btn-header-scada" title="Buka Dashboard Asal PYPY (SCADA Port 3001)">
+        <span>🖥️ SCADA</span>
+      </button>
       <button class="pill-btn mode-btn" id="btn-mode-toggle" title="Tukar Mod Simulasi / Sambung ke Docker Backend">
         <span id="mode-icon">🎮</span>
         <span id="mode-text">Simulasi</span>
@@ -109,6 +112,7 @@
       <button class="nav-tab" data-tab="simulation"><span>🎯</span> Simulasi Serangan</button>
       <button class="nav-tab" data-tab="forensics"><span>📜</span> Forensik MQTT</button>
       <button class="nav-tab" data-tab="health"><span>💓</span> Kesihatan</button>
+      <button class="nav-tab nav-tab-scada" id="nav-tab-scada" title="Buka Pilihan Dashboard Asal SCADA"><span>🖥️</span> Dashboard Asal</button>
     </div>
   </nav>
 
@@ -294,6 +298,22 @@
             <span class="l6-pill active">✅ 4. AC Menumpu</span>
             <span class="l6-pill active">✅ 5. CLOSE Dihantar</span>
             <span class="l6-pill active highlight">🛡️ 6. GRID SECURED</span>
+          </div>
+        </div>
+
+        <div class="dash-card scada-callout-card">
+          <div class="card-head">
+            <h4>🖥️ Dashboard Asal PYPY (SCADA Production)</h4>
+            <span class="badge-tag blue">PORT 3001 DOCKER</span>
+          </div>
+          <p class="card-desc">Sistem kawalan SCADA 2D penuh dengan data PandaPower Newton-Raphson, pemantauan 39 bas, dan log forensik milisaat.</p>
+          <div class="scada-btn-group" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+            <button class="pill-btn primary-solid" id="btn-quick-scada-open">
+              <span>🖥️ Buka Pilihan Dashboard Asal</span>
+            </button>
+            <a href="http://localhost:3001/#/exhibition" target="_blank" rel="noopener noreferrer" class="pill-btn" style="border: 1px solid var(--border-color); text-decoration: none;">
+              <span>⚡ Mod Pameran (Port 3001)</span>
+            </a>
           </div>
         </div>
 
@@ -668,6 +688,61 @@
           <button class="pill-btn secondary" id="btn-disconnect-backend">🎮 Mod Simulasi (Offline)</button>
           <button class="pill-btn primary-solid" id="btn-connect-backend">🔌 Sambung ke Backend</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Dashboard Asal PYPY (SCADA Production) -->
+  <div class="backend-modal hidden" id="scada-modal">
+    <div class="backend-modal-card">
+      <div class="bmc-header">
+        <div class="bmc-title-row">
+          <span class="bmc-icon">🖥️</span>
+          <h3>Dashboard Asal PYPY (SCADA Production)</h3>
+        </div>
+        <button class="bmc-close" id="btn-close-scada-modal">✕</button>
+      </div>
+      <div class="bmc-body">
+        <p class="bmc-desc">
+          Ini adalah papan pemuka kejuruteraan asal (React + Nginx) yang berjalan bersama 19 kontena Docker PYPY, memaparkan topologi IEEE 39-Bus, penyelesai aliran kuasa AC, dan audit forensik milisaat.
+        </p>
+
+        <div class="bmc-status-box" style="background: rgba(2, 132, 199, 0.08); border-color: rgba(2, 132, 199, 0.3);">
+          <strong style="color: #0284c7;">⚡ Lokasi Servis: Port 3001 (Nginx Web) & Port 8000 (API)</strong>
+          <span class="bmc-sub">Status: Docker aktif di laptop pembentang.</span>
+        </div>
+
+        <!-- Opsyen 1: Komputer Riba Pembentang -->
+        <div style="margin-top: 14px;">
+          <h5 style="margin-bottom: 6px; font-size: 0.85rem; font-weight: 700; color: var(--text-heading);">1. Akses Melalui Komputer Riba Pembentang:</h5>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer" class="pill-btn primary-solid" style="text-decoration: none; padding: 7px 12px;">
+              🚀 Buka SCADA (localhost:3001)
+            </a>
+            <a href="http://localhost:3001/#/exhibition" target="_blank" rel="noopener noreferrer" class="pill-btn secondary" style="text-decoration: none; padding: 7px 12px;">
+              ⚡ Mod Pameran Skrin Penuh
+            </a>
+            <a href="http://localhost:3001/#/forensics" target="_blank" rel="noopener noreferrer" class="pill-btn secondary" style="text-decoration: none; padding: 7px 12px;">
+              📜 Log Forensik Milisaat
+            </a>
+          </div>
+        </div>
+
+        <!-- Opsyen 2: Akses dari Telefon Panel Melalui Public Tunnel -->
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border-color);">
+          <h5 style="margin-bottom: 6px; font-size: 0.85rem; font-weight: 700; color: var(--text-heading);">2. Akses dari Telefon Panel (Cloudflare Public Tunnel):</h5>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px;">
+            Sekiranya panel membuka laman web dari telefon mereka, pembentang boleh menjalankan <code>./start-pypy-public.sh</code> di laptop untuk mendapatkan pautan awam.
+          </p>
+          <div class="bmc-input-group" style="margin-bottom: 8px;">
+            <label for="scada-tunnel-url">URL Public Tunnel Dashboard:</label>
+            <input type="text" id="scada-tunnel-url" placeholder="https://xxxx.trycloudflare.com" value="" />
+          </div>
+          <button class="pill-btn primary-solid" id="btn-open-scada-tunnel" style="width: 100%; justify-content: center;">
+            🌐 Buka Dashboard Awam Melalui Telefon
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
