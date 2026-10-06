@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-wUbAVoeG.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-B16No_r4.css">
+  <script type="module" crossorigin src="./assets/index-DWPrcRBQ.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CJBO21h2.css">
 </head>
 <body class="day-mode">
   <!-- 3D WebGL Canvas Layer -->
@@ -76,6 +76,10 @@
         <span class="star-gold">⭐</span>
         <span>GitHub</span>
       </a>
+      <button class="pill-btn mode-btn" id="btn-mode-toggle" title="Tukar Mod Simulasi / Sambung ke Docker Backend">
+        <span id="mode-icon">🎮</span>
+        <span id="mode-text">Simulasi</span>
+      </button>
       <button class="pill-btn demo-btn" id="btn-auto-demo" title="Jalankan Tur Panduan Pameran Automatik">
         <span>🎬 Demo</span>
       </button>
@@ -633,6 +637,40 @@
 
     </div>
   </section>
+
+  <!-- Modal Sambungan Backend (Docker / Tunnel WebSocket) -->
+  <div class="backend-modal hidden" id="backend-modal">
+    <div class="backend-modal-card">
+      <div class="bmc-header">
+        <div class="bmc-title-row">
+          <span class="bmc-icon">📡</span>
+          <h3>Telemetri Sebenar PYPY (Docker / Tunnel)</h3>
+        </div>
+        <button class="bmc-close" id="btn-close-backend-modal">✕</button>
+      </div>
+      <div class="bmc-body">
+        <p class="bmc-desc">
+          Pilih mod sumber data. Secara lalai, sistem beroperasi dalam <strong>Mod Simulasi Autonomi</strong> (sesuai untuk imbasan QR tanpa Docker). Anda boleh menyambungkan ke backend sebenar jika Docker dihidupkan di laptop anda.
+        </p>
+        
+        <div class="bmc-status-box" id="bmc-status-box">
+          <strong id="bmc-status-title">🎮 Mod Simulasi Autonomi (Aktif)</strong>
+          <span class="bmc-sub" id="bmc-status-sub">Digital twin berjalan kendiri tanpa memerlukan server.</span>
+        </div>
+
+        <div class="bmc-input-group">
+          <label for="backend-ws-url">Alamat WebSocket Gateway (Docker / Tunnel):</label>
+          <input type="text" id="backend-ws-url" placeholder="ws://localhost:8000/ws" value="ws://localhost:8000/ws" />
+          <small>Contoh: <code>ws://localhost:8000/ws</code> (Laptop) atau <code>wss://xxxx.trycloudflare.com/ws</code> (Cloudflare Quick Tunnel)</small>
+        </div>
+
+        <div class="bmc-actions">
+          <button class="pill-btn secondary" id="btn-disconnect-backend">🎮 Mod Simulasi (Offline)</button>
+          <button class="pill-btn primary-solid" id="btn-connect-backend">🔌 Sambung ke Backend</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
