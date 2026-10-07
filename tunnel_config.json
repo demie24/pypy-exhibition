@@ -1,6 +1,6 @@
 {
-  "activeTunnelUrl": "https://api.trycloudflare.com",
-  "activeWsUrl": "wss://api.trycloudflare.com/ws",
+  "activeTunnelUrl": "https://blvd-cable-dental-facts.trycloudflare.com",
+  "activeWsUrl": "wss://blvd-cable-dental-facts.trycloudflare.com/ws",
   "status": "online",
-  "updatedAt": "2026-10-07T01:31:31Z"
+  "updatedAt": "2026-10-07T01:34:38Z"
 }
